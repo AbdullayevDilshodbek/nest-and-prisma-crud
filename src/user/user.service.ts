@@ -3,46 +3,51 @@ import { PrismaService } from '../prisma.service';
 import {
   User,
   Prisma,
-  PrismaPromise,
-  CreateUserMessage
 } from '@prisma/client';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async index(): Promise<User[]>
-  {
-    return this.prisma.user.findMany({})
+  async index(): Promise<User[]> {
+    return this.prisma.user.findMany({
+      include: {
+        city: {
+          select: {
+            title: true
+          }
+        }
+      }
+    })
   }
 
-  async store(data: Prisma.UserCreateInput): Promise<User>
-  {
+  async store(data: Prisma.UserCreateInput): Promise<User> {
     return this.prisma.user.create({
       data
     })
   }
 
-  async show(id: number): Promise<User>
-  {
+  async show(id: number): Promise<User> {
     return this.prisma.user.findFirst({
-      where: {id}
+      where: { id },
+      include: {
+        city: true
+      }
     })
   }
 
-  async update(data: Prisma.UserUpdateInput, id: number): Promise<String>
-  {
+  async update(data: Prisma.UserUpdateInput, id: number): Promise<String> {
     this.prisma.user.update({
       data,
-      where: {id}
+      where: { id }
     })
     return id + 'skjd';
   }
 
   async delete(id: number) {
     await this.prisma.user.delete({
-        where: {id}
+      where: { id }
     })
-    return {message: "Foydalanuvchi o'chirildi"}
-}
+    return { message: "Foydalanuvchi o'chirildi" }
+  }
 }

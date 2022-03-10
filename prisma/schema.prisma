@@ -11,8 +11,17 @@ datasource db {
 }
 
 model User {
-  id Int @default(autoincrement()) @id
-  username String @unique
+  id       Int     @id @default(autoincrement())
+  username String  @unique
   password String
+  city_id  Int?
+  city     City?   @relation(fields: [city_id], references: [id])
+  active   Boolean @default(true)
+}
+
+model City {
+  id     Int     @id @default(autoincrement())
+  title  String
   active Boolean @default(true)
+  User   User[]
 }
